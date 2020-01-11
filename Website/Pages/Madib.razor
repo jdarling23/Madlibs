@@ -1,0 +1,44 @@
+﻿@page "/madlib"
+
+@using System.Text
+@using Website.Data
+@using Models
+@inject MadlibService MadlibService
+
+<h1>A Northrich Elementary Story...</h1>
+
+<p>Enter your name: <input type="text" @bind="studentName" /><br /></p>
+<button class="btn btn-primary" @onclick="FindStudentData">See My Story</button>
+
+<p>@story</p>
+
+@code {
+    string studentName;
+    string story = "";
+    Madlib studentData;
+
+    protected async Task FindStudentData()
+    {
+        studentData = await MadlibService.GetMadlibByStudentName(studentName);
+        story = BuildMadlib(studentData);
+    }
+
+    private string BuildMadlib(Madlib studentData)
+    {
+        StringBuilder storyBuilder = new StringBuilder();
+
+        if (studentData == null)
+            return "Hmm, I don't know anybody with that name! Seriously, what is it?";
+
+        storyBuilder.Append($"It was a bright and sunny day outside of Northrich Elementary ");
+        storyBuilder.Append($"and {studentData.StudentName} was sitting down to enjoy a nice helping of {studentData.FavoriteFood}. ");
+        storyBuilder.Append($"Suddenly, a wild pack of {studentData.FavoriteNumber} {studentData.FavoriteColor} {studentData.FavoriteAnimal}s jumped out ");
+        storyBuilder.Append($"and tried to steal {studentData.StudentName}'s {studentData.FavoriteFood}! ");
+        storyBuilder.Append($"\"Hey\" cried {studentData.StudentName}. \"You can't take my food! According to Immanuel Kant, you are violating my personal autonomy!\" ");
+        storyBuilder.Append($"\"Hmm,\" said one of the {studentData.FavoriteAnimal}s. \"You make a well reasoned point, and your logic is truly infallible. Let's just be friends!\" ");
+        storyBuilder.Append($"So {studentData.StudentName} and the pack of {studentData.FavoriteColor} {studentData.FavoriteAnimal}s lived happily ever after. ");
+        storyBuilder.Append($"The end!");
+
+        return storyBuilder.ToString();
+    }
+}
